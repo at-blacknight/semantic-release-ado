@@ -50,6 +50,8 @@ The behavior when no new release is available can be configured with *setOnlyOnR
 | varName          | Name of the variable that will store the next version. Defaults to *nextRelease*. |
 | setOnlyOnRelease | `Bool`. Determines if the variable with the new version will be set only when a new version is available. <br> If set to `false`, the next version variable will store the last released version when no new version is available.<br> Defaults to *true*. |
 | isOutput         | `Bool`. Determines whether the version will be set as an output variable, so it is available in later stages.<br> Defaults to *false*. |
+| setWouldRelease  | `Bool`. Enables a boolean variable indicating whether a release will be published. Defaults to *false*. |
+| wouldReleaseVarName | Name of the variable that will store the would_release flag. Defaults to *would_release*. |
 
 #### Release Object Variables (Next Release)
 These options enable exposing individual properties from the next release as separate variables in the `verifyRelease` hook.
@@ -102,6 +104,34 @@ plugins:
   ]
 }
 ```
+
+#### Using Would Release Variable
+
+The following example enables the `would_release` boolean variable to indicate whether a release will be published.
+
+`YAML`:
+```yaml
+plugins:
+  - - "semantic-release-ado"
+    - varName: "nextRelease"
+      setWouldRelease: true
+      isOutput: true
+```
+
+`JSON`:
+```json
+{
+  "plugins": [
+    ["semantic-release-ado", {
+      "varName": "nextRelease",
+      "setWouldRelease": true,
+      "isOutput": true
+    }]
+  ]
+}
+```
+
+This will set a `would_release` variable to `false` during the `analyzeCommits` stage and `true` during the `verifyRelease` stage if a new release will be published. You can use this variable in downstream steps to conditionally execute tasks only when a release is being made.
 
 #### Using Release Object Variables
 
