@@ -1,6 +1,6 @@
 {
   "name": "@at-blacknight/semantic-release-ado",
-  "version": "1.5.0-changelog.3",
+  "version": "1.5.0-changelog.4",
   "description": "Semantic release plugin for automatic releases on Azure DevOps pipelines.",
   "main": "index.js",
   "scripts": {
