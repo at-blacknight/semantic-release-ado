@@ -9,6 +9,7 @@ Semantic release plugin for automatic builds on Azure DevOps pipelines.
 |------------------|-------------|
 | `analyzeCommits` | If configured to do so, stores the current version as an Azure DevOps pipeline variable. Optionally exposes properties from the last release as individual variables. |
 | `verifyRelease`  | Stores the next version as an Azure DevOps pipeline variable availabe to downstream steps on the job. Optionally exposes individual properties from the next release as separate variables. |
+| `generateNotes`  | Optionally writes release notes to a markdown file with configurable behavior (prepend, append, or overwrite). Runs during the generateNotes stage and works in dry-run mode. |
 
 ## Install
 
@@ -75,6 +76,16 @@ These options enable exposing individual properties from the last release as sep
 | lastReleaseGitTagVarName      | Name of the variable that will store the last release git tag. Defaults to *lastReleaseGitTag*. |
 | lastReleaseChannelVarName     | Name of the variable that will store the last release distribution channel. Defaults to *lastReleaseChannel*. |
 
+#### Release Notes File Generation
+
+These options enable writing release notes to a markdown file during the `generateNotes` stage.
+
+| **Options**               | **Description**                                       |
+|---------------------------|-------------------------------------------------------|
+| writeNotesFile            | `Bool`. Enables writing release notes to a markdown file. Defaults to *false*. |
+| notesFilePath             | Path where the release notes file will be written. Defaults to *CHANGELOG-latest.md*. |
+| notesFileBehaviour        | `String`. How to handle existing file: *prepend* (new notes at top), *append* (new notes at bottom), or *overwrite* (replace entire file). Defaults to *prepend*. |
+
 ### Examples
 
 #### Basic Configuration
@@ -135,6 +146,82 @@ This will set the following variables when a release is published:
 
 - From `verifyRelease`: `releaseVersion`, `releaseType`, `releaseGitHead`, `releaseGitTag`, `releaseNotes`, `releaseChannel`
 - From `analyzeCommits`: `lastReleaseVersion`, `lastReleaseGitHead`, `lastReleaseGitTag`, `lastReleaseChannel`
+
+#### Writing Release Notes to File
+
+The following examples show how to enable release notes file generation with different behaviors.
+
+**Prepend mode (latest releases at top):**
+
+`YAML`:
+```yaml
+plugins:
+  - - "@at-blacknight/semantic-release-ado"
+    - writeNotesFile: true
+      notesFilePath: "CHANGELOG-latest.md"
+      notesFileBehaviour: "prepend"
+```
+
+`JSON`:
+```json
+{
+  "plugins": [
+    ["@at-blacknight/semantic-release-ado", {
+      "writeNotesFile": true,
+      "notesFilePath": "CHANGELOG-latest.md",
+      "notesFileBehaviour": "prepend"
+    }]
+  ]
+}
+```
+
+**Append mode (chronological order):**
+
+`YAML`:
+```yaml
+plugins:
+  - - "@at-blacknight/semantic-release-ado"
+    - writeNotesFile: true
+      notesFilePath: "CHANGELOG.md"
+      notesFileBehaviour: "append"
+```
+
+`JSON`:
+```json
+{
+  "plugins": [
+    ["@at-blacknight/semantic-release-ado", {
+      "writeNotesFile": true,
+      "notesFilePath": "CHANGELOG.md",
+      "notesFileBehaviour": "append"
+    }]
+  ]
+}
+```
+
+**Overwrite mode (keep only latest release):**
+
+`YAML`:
+```yaml
+plugins:
+  - - "@at-blacknight/semantic-release-ado"
+    - writeNotesFile: true
+      notesFilePath: "LATEST-RELEASE.md"
+      notesFileBehaviour: "overwrite"
+```
+
+`JSON`:
+```json
+{
+  "plugins": [
+    ["@at-blacknight/semantic-release-ado", {
+      "writeNotesFile": true,
+      "notesFilePath": "LATEST-RELEASE.md",
+      "notesFileBehaviour": "overwrite"
+    }]
+  ]
+}
+```
 
 ## Azure DevOps build pipeline YAML example:
 
