@@ -10,9 +10,6 @@
     "type": "git",
     "url": "git+https://github.com/at-blacknight/semantic-release-ado.git"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "author": "Kevin Lluch",
   "license": "MIT",
   "bugs": {
