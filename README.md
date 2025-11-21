@@ -7,8 +7,8 @@ Semantic release plugin for automatic builds on Azure DevOps pipelines.
 
 | Step             | Description |
 |------------------|-------------|
-| `analyzeCommits` | If configured to do so, stores the current version as an Azure DevOps pipeline variable. |
-| `verifyRelease`  | Stores the next version as an Azure DevOps pipeline variable availabe to downstream steps on the job. |
+| `analyzeCommits` | If configured to do so, stores the current version as an Azure DevOps pipeline variable. Optionally exposes properties from the last release as individual variables. |
+| `verifyRelease`  | Stores the next version as an Azure DevOps pipeline variable availabe to downstream steps on the job. Optionally exposes individual properties from the next release as separate variables. |
 
 ## Install
 
@@ -43,14 +43,43 @@ The behavior when no new release is available can be configured with *setOnlyOnR
 
 ### Options
 
+#### Core Options
+
 | **Options**      | **Desctiption**                                       |
 |------------------|-------------------------------------------------------|
 | varName          | Name of the variable that will store the next version. Defaults to *nextRelease*. |
 | setOnlyOnRelease | `Bool`. Determines if the variable with the new version will be set only when a new version is available. <br> If set to `false`, the next version variable will store the last released version when no new version is available.<br> Defaults to *true*. |
 | isOutput         | `Bool`. Determines whether the version will be set as an output variable, so it is available in later stages.<br> Defaults to *false*. |
 
+#### Release Object Variables (Next Release)
+These options enable exposing individual properties from the next release as separate variables in the `verifyRelease` hook.
 
-The following examples store the generated version number in a variable named *version*.
+| **Options**              | **Description**                                       |
+|--------------------------|-------------------------------------------------------|
+| setReleaseObjectVariables | `Bool`. Enables individual next release property variables. Defaults to *false*. |
+| releaseVersionVarName     | Name of the variable that will store the next release version. Defaults to *releaseVersion*. |
+| releaseTypeVarName        | Name of the variable that will store the semver type (major, minor, patch). Defaults to *releaseType*. |
+| releaseGitHeadVarName     | Name of the variable that will store the git commit SHA. Defaults to *releaseGitHead*. |
+| releaseGitTagVarName      | Name of the variable that will store the git tag. Defaults to *releaseGitTag*. |
+| releaseNotesVarName       | Name of the variable that will store the release notes. Defaults to *releaseNotes*. |
+| releaseChannelVarName     | Name of the variable that will store the distribution channel. Defaults to *releaseChannel*. |
+
+#### Last Release Object Variables
+These options enable exposing individual properties from the last release as separate variables in the `analyzeCommits` hook.
+
+| **Options**               | **Description**                                       |
+|---------------------------|-------------------------------------------------------|
+| setLastReleaseObjectVariables | `Bool`. Enables individual last release property variables. Defaults to *false*. |
+| lastReleaseVersionVarName     | Name of the variable that will store the last release version. Defaults to *lastReleaseVersion*. |
+| lastReleaseGitHeadVarName     | Name of the variable that will store the last release git commit SHA. Defaults to *lastReleaseGitHead*. |
+| lastReleaseGitTagVarName      | Name of the variable that will store the last release git tag. Defaults to *lastReleaseGitTag*. |
+| lastReleaseChannelVarName     | Name of the variable that will store the last release distribution channel. Defaults to *lastReleaseChannel*. |
+
+### Examples
+
+#### Basic Configuration
+
+The following example stores the generated version number in a variable named *version*.
 
 `YAML`:
 ```yaml
@@ -68,11 +97,44 @@ plugins:
     ["semantic-release-ado", {
       "varName": "version",
       "setOnlyOnRelease": true,
-      "isOutput": true //defaults to false
-    }],
+      "isOutput": true
+    }]
   ]
 }
 ```
+
+#### Using Release Object Variables
+
+The following example enables individual release properties as separate variables.
+
+`YAML`:
+```yaml
+plugins:
+  - - "semantic-release-ado"
+    - varName: "nextRelease"
+      setReleaseObjectVariables: true
+      setLastReleaseObjectVariables: true
+      isOutput: true
+```
+
+`JSON`:
+```json
+{
+  "plugins": [
+    ["semantic-release-ado", {
+      "varName": "nextRelease",
+      "setReleaseObjectVariables": true,
+      "setLastReleaseObjectVariables": true,
+      "isOutput": true
+    }]
+  ]
+}
+```
+
+This will set the following variables when a release is published:
+
+- From `verifyRelease`: `releaseVersion`, `releaseType`, `releaseGitHead`, `releaseGitTag`, `releaseNotes`, `releaseChannel`
+- From `analyzeCommits`: `lastReleaseVersion`, `lastReleaseGitHead`, `lastReleaseGitTag`, `lastReleaseChannel`
 
 ## Azure DevOps build pipeline YAML example:
 
