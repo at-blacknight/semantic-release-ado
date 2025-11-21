@@ -63,7 +63,6 @@ These options enable exposing individual properties from the next release as sep
 | releaseTypeVarName        | Name of the variable that will store the semver type (major, minor, patch). Defaults to *releaseType*. |
 | releaseGitHeadVarName     | Name of the variable that will store the git commit SHA. Defaults to *releaseGitHead*. |
 | releaseGitTagVarName      | Name of the variable that will store the git tag. Defaults to *releaseGitTag*. |
-| releaseNotesVarName       | Name of the variable that will store the release notes. Defaults to *releaseNotes*. |
 | releaseChannelVarName     | Name of the variable that will store the distribution channel. Defaults to *releaseChannel*. |
 
 #### Last Release Object Variables
@@ -163,7 +162,7 @@ plugins:
 
 This will set the following variables when a release is published:
 
-- From `verifyRelease`: `releaseVersion`, `releaseType`, `releaseGitHead`, `releaseGitTag`, `releaseNotes`, `releaseChannel`
+- From `verifyRelease`: `releaseVersion`, `releaseType`, `releaseGitHead`, `releaseGitTag`, `releaseChannel`
 - From `analyzeCommits`: `lastReleaseVersion`, `lastReleaseGitHead`, `lastReleaseGitTag`, `lastReleaseChannel`
 
 ## Azure DevOps build pipeline YAML example:
@@ -191,7 +190,7 @@ jobs:
 ### Configuration:
 Below is the configuration for setting `isOutput` to true, which will allow the variable to be referenced from other jobs/stages
 
-`JSON`: 
+`JSON`:
 ```json
 {
   "plugins": [
@@ -236,7 +235,7 @@ jobs:
 ### In another stage:
 
 ```yaml
-stages: 
+stages:
   - stage: Stage1
     jobs:
     - job: Job1
