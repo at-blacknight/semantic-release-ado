@@ -124,8 +124,8 @@ plugins:
     ["semantic-release-ado", {
       "varName": "nextRelease",
       "setWouldRelease": true,
-      "isOutput": true
-    }]
+      "isOutput": true //defaults to false
+    }],
   ]
 }
 ```
