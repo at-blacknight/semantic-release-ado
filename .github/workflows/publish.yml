@@ -20,7 +20,12 @@ jobs:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
       - run: npm install -g npm@latest
-      - run: npm publish --access public --tag next
+      - run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" || "${{ github.ref }}" == "refs/heads/master" ]]; then
+            npm publish --access public --tag latest
+          else
+            npm publish --access public --tag next
+          fi
 
   publish-github:
     runs-on: ubuntu-latest
